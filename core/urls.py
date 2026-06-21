@@ -26,10 +26,11 @@ urlpatterns = [
     path("api/", include("profiles.api.urls")),
 
     path("api/offers/", include("offers.api.urls")),
+    path("api/offerdetails/", include("offers.api.offerdetail_urls")),
+
     path("api/orders/", include("orders.api.urls")),
     path("api/reviews/", include("reviews.api.urls")),
 
     path("api/", include("api.api.urls")),
-
     path("api-auth/", include("rest_framework.urls")),
 ]
