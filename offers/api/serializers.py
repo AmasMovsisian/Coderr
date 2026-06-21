@@ -5,6 +5,7 @@ from offers.models import OfferDetail
 
 
 class OfferDetailSerializer(serializers.ModelSerializer):
+    """Serializer for full representation of an OfferDetail instance."""
 
     class Meta:
         model = OfferDetail
@@ -20,6 +21,7 @@ class OfferDetailSerializer(serializers.ModelSerializer):
 
 
 class OfferDetailUrlSerializer(serializers.ModelSerializer):
+    """Serializer that provides a URL reference for an OfferDetail instance."""
 
     url = serializers.SerializerMethodField()
 
@@ -31,6 +33,9 @@ class OfferDetailUrlSerializer(serializers.ModelSerializer):
         ]
 
     def get_url(self, obj):
+        """
+        Return absolute or relative URL for an OfferDetail instance.
+        """
         request = self.context.get("request")
 
         if request:
@@ -42,6 +47,7 @@ class OfferDetailUrlSerializer(serializers.ModelSerializer):
 
 
 class OfferListSerializer(serializers.ModelSerializer):
+    """Serializer for listing Offer instances with summary metadata and related details."""
 
     user = serializers.IntegerField(
         source="user.id",
@@ -73,6 +79,7 @@ class OfferListSerializer(serializers.ModelSerializer):
         ]
 
     def get_details(self, obj):
+        """Return serialized URL representations of related OfferDetail objects."""
         return OfferDetailUrlSerializer(
             obj.details.all(),
             many=True,
@@ -80,6 +87,7 @@ class OfferListSerializer(serializers.ModelSerializer):
         ).data
 
     def get_user_details(self, obj):
+        """Return basic public information about the offer owner."""
         return {
             "first_name": obj.user.first_name,
             "last_name": obj.user.last_name,
@@ -88,6 +96,7 @@ class OfferListSerializer(serializers.ModelSerializer):
 
 
 class OfferRetrieveSerializer(serializers.ModelSerializer):
+    """Serializer for retrieving a full Offer instance with computed metadata."""
 
     user = serializers.IntegerField(
         source="user.id",
@@ -116,6 +125,7 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
         ]
 
     def get_details(self, obj):
+        """Return serialized URL representations of related OfferDetail objects."""
         return OfferDetailUrlSerializer(
             obj.details.all(),
             many=True,
@@ -124,6 +134,7 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
 
 
 class OfferCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating an Offer with exactly three OfferDetail entries."""
 
     details = OfferDetailSerializer(
         many=True
@@ -140,7 +151,9 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         ]
 
     def validate_details(self, value):
-
+        """
+        Validate that exactly three offer details exist and cover all required types.
+        """
         if len(value) != 3:
             raise serializers.ValidationError(
                 "Exactly 3 details required."
@@ -156,7 +169,9 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-
+        """
+        Create Offer and its related OfferDetail instances.
+        """
         details_data = validated_data.pop("details")
 
         offer = Offer.objects.create(
@@ -173,7 +188,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         return offer
 
     def to_representation(self, instance):
-
+        """Return structured representation of Offer after creation."""
         return {
             "id": instance.id,
             "title": instance.title,
@@ -187,6 +202,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
 
 class OfferPatchSerializer(serializers.ModelSerializer):
+    """Serializer for partial updates of Offer and its nested OfferDetail objects."""
 
     details = serializers.ListField(
         required=False
@@ -202,7 +218,9 @@ class OfferPatchSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
-
+        """
+        Update Offer fields and optionally update related OfferDetail entries.
+        """
         details = validated_data.pop("details", None)
 
         for attr, value in validated_data.items():
@@ -211,7 +229,6 @@ class OfferPatchSerializer(serializers.ModelSerializer):
         instance.save()
 
         if details:
-
             for detail_data in details:
 
                 offer_type = detail_data.get("offer_type")
@@ -234,7 +251,7 @@ class OfferPatchSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
-
+        """Return structured representation of Offer after update."""
         return {
             "id": instance.id,
             "title": instance.title,

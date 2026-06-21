@@ -3,6 +3,9 @@ from django.conf import settings
 
 
 class Profile(models.Model):
+    """
+    Store additional profile information for a user.
+    """
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -43,4 +46,7 @@ class Profile(models.Model):
     )
 
     def __str__(self):
+        """
+        Return the username associated with this profile.
+        """
         return self.user.username

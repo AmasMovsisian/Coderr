@@ -3,6 +3,10 @@ from django.db import models
 
 
 class Offer(models.Model):
+    """
+    Represents a service offer created by a user.
+    """
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -17,18 +21,25 @@ class Offer(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
+        """
+        Return the offer title.
+        """
         return self.title
 
 
 class OfferDetail(models.Model):
+    """
+    Defines pricing tiers and details for an offer.
+    """
 
     OFFER_TYPES = (
         ("basic", "Basic"),
         ("standard", "Standard"),
         ("premium", "Premium"),
     )
+
     offer = models.ForeignKey(
         Offer,
         on_delete=models.CASCADE,
@@ -48,4 +59,7 @@ class OfferDetail(models.Model):
     )
 
     def __str__(self):
+        """
+        Return a human-readable representation of the offer detail.
+        """
         return f"{self.offer.title} - {self.offer_type}"

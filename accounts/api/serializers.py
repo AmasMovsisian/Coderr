@@ -1,4 +1,4 @@
-from rest_framework import serializers 
+from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 
@@ -14,6 +14,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     using the custom user model manager.
     """
     repeated_password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = (
