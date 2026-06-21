@@ -4,15 +4,26 @@ from offers.models import OfferDetail
 
 
 class OrderListSerializer(serializers.ModelSerializer):
+    """
+    Serialize complete order data for API responses.
+    """
+
     class Meta:
         model = Order
         fields = "__all__"
 
 
 class OrderCreateSerializer(serializers.Serializer):
+    """
+    Handle order creation from an offer detail selection.
+    """
+
     offer_detail_id = serializers.IntegerField()
 
     def create(self, validated_data):
+        """
+        Create a new order based on the selected offer detail.
+        """
         request = self.context["request"]
         offer_detail_id = validated_data["offer_detail_id"]
 
@@ -41,18 +52,26 @@ class OrderCreateSerializer(serializers.Serializer):
         return order
 
     def to_representation(self, instance):
+        """
+        Return the created order using the standard order serializer.
+        """
         return OrderListSerializer(instance).data
 
 
 class OrderPatchSerializer(serializers.ModelSerializer):
+    """
+    Handle partial updates to an order's status.
+    """
+
     class Meta:
         model = Order
         fields = ["status"]
 
     def validate_status(self, value):
+        """
+        Validate that the provided status is supported.
+        """
         allowed = ["in_progress", "completed", "cancelled"]
-
         if value not in allowed:
             raise serializers.ValidationError("Invalid status")
-
         return value
