@@ -2,12 +2,11 @@ from rest_framework import serializers
 from reviews.models import Review
 
 
-# =========================
-# READ SERIALIZER
-# =========================
 class ReviewSerializer(serializers.ModelSerializer):
+    """Serializer for representing Review instances."""
 
     class Meta:
+        """Meta options for ReviewSerializer."""
         model = Review
         fields = [
             "id",
@@ -20,12 +19,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         ]
 
 
-# =========================
-# BASE VALIDATION MIXIN
-# =========================
 class ReviewRatingValidationMixin:
+    """Mixin providing validation logic for review rating fields."""
 
     def validate_rating(self, value):
+        """Validate that rating is within the allowed range (1–5)."""
         if value < 1 or value > 5:
             raise serializers.ValidationError(
                 "Rating must be between 1 and 5."
@@ -33,15 +31,14 @@ class ReviewRatingValidationMixin:
         return value
 
 
-# =========================
-# CREATE SERIALIZER
-# =========================
 class ReviewCreateSerializer(
     ReviewRatingValidationMixin,
     serializers.ModelSerializer
 ):
+    """Serializer for creating Review instances."""
 
     class Meta:
+        """Meta options for ReviewCreateSerializer."""
         model = Review
         fields = [
             "business_user",
@@ -50,6 +47,7 @@ class ReviewCreateSerializer(
         ]
 
     def create(self, validated_data):
+        """Create a new Review instance using the authenticated user as reviewer."""
         request = self.context["request"]
 
         return Review.objects.create(
@@ -58,18 +56,18 @@ class ReviewCreateSerializer(
         )
 
     def to_representation(self, instance):
+        """Return serialized representation using the default ReviewSerializer."""
         return ReviewSerializer(instance).data
 
 
-# =========================
-# PATCH SERIALIZER
-# =========================
 class ReviewPatchSerializer(
     ReviewRatingValidationMixin,
     serializers.ModelSerializer
 ):
+    """Serializer for partially updating Review instances."""
 
     class Meta:
+        """Meta options for ReviewPatchSerializer."""
         model = Review
         fields = [
             "rating",

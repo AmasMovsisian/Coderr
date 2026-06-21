@@ -14,23 +14,28 @@ from .permissions import (
 
 
 class ReviewListCreateView(generics.ListCreateAPIView):
+    """API view to list and create reviews."""
 
     queryset = Review.objects.all()
 
     def get_serializer_class(self):
+        """Return serializer class based on request method."""
         if self.request.method == "POST":
             return ReviewCreateSerializer
         return ReviewSerializer
 
     def get_serializer_context(self):
+        """Provide additional context to serializer."""
         return {"request": self.request}
 
     def get_permissions(self):
+        """Assign permissions based on request method."""
         if self.request.method == "POST":
             return [IsAuthenticated(), IsCustomerUser()]
         return [IsAuthenticated()]
 
     def get_queryset(self):
+        """Return filtered and optionally ordered queryset of reviews."""
         queryset = Review.objects.all()
 
         business_user_id = self.request.query_params.get("business_user_id")
@@ -49,17 +54,19 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         return queryset
 
 
-# ✅ IMPORTANT: ONE VIEW FOR PATCH + DELETE
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """API view to retrieve, update, or delete a single review."""
 
     queryset = Review.objects.all()
 
     def get_serializer_class(self):
+        """Return serializer class based on request method."""
         if self.request.method == "PATCH":
             return ReviewPatchSerializer
         return ReviewSerializer
 
     def get_permissions(self):
+        """Assign permissions based on request method."""
         if self.request.method in ["PATCH", "DELETE"]:
             return [IsAuthenticated(), IsReviewOwner()]
         return [IsAuthenticated()]
