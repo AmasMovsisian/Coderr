@@ -46,6 +46,23 @@ class ReviewCreateSerializer(
             "description"
         ]
 
+    def validate(self, data):
+        """Check that user hasn't already reviewed this business."""
+        request = self.context.get("request")
+
+        if request and request.user.is_authenticated:
+            business_user = data.get("business_user")
+
+            if Review.objects.filter(
+                business_user=business_user,
+                reviewer=request.user
+            ).exists():
+                raise serializers.ValidationError(
+                    "You have already reviewed this business."
+                )
+
+        return data
+
     def create(self, validated_data):
         """Create a new Review instance using the authenticated user as reviewer."""
         request = self.context["request"]
