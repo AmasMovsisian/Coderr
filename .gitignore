@@ -1,7 +1,121 @@
+# =========================
+# VIRTUAL ENV
+# =========================
 venv/
-.env
+.env/
+.env.*
+!.env.example
+env/
+ENV/
+.venv/
+
+
+
+# =========================
+# PYTHON CACHE
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================
+# TEST / COVERAGE
+# =========================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+nosetests.xml
+coverage.xml
+
+# =========================
+# DJANGO
+# =========================
+*.log
+local_settings.py
 db.sqlite3
+db.sqlite3-journal
 
 media/
-__pycache__/
-*.pyc
+staticfiles/
+static/
+
+# migrations (optional: nur wenn du sie wirklich NICHT committen willst)
+# */migrations/*.py
+# */migrations/*.pyc
+# !*/migrations/__init__.py
+
+# =========================
+# ENV / SECRETS
+# =========================
+*.env
+.env.local
+.env.production
+.env.staging
+
+# =========================
+# IDE / EDITORS
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# MISC
+# =========================
+*.sqlite3
+*.db
+*.bak
+*.backup
+
+# =========================
+# JUPYTER NOTEBOOK
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# NODE (falls Frontend dabei ist)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# SECURITY / PRIVATE
+# =========================
+secrets.json
+credentials.json
+private.key
+*.pem
