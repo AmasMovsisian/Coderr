@@ -105,14 +105,14 @@ class OfferListCreateView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """
-        Create Offer and return full retrieve representation.
+        Create Offer and return full create representation.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         offer = serializer.save()
 
         return Response(
-            OfferRetrieveSerializer(
+            OfferCreateSerializer(
                 offer,
                 context=self.get_serializer_context()
             ).data,
@@ -123,7 +123,14 @@ class OfferListCreateView(generics.ListCreateAPIView):
 class OfferDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update, or delete a specific offer instance."""
 
-    queryset = Offer.objects.all()
+    def get_queryset(self):
+        """
+        Return queryset with annotated min_price and min_delivery_time.
+        """
+        return Offer.objects.all().annotate(
+            min_price=Min("details__price"),
+            min_delivery_time=Min("details__delivery_time_in_days")
+        )
 
     def get_permissions(self):
         """

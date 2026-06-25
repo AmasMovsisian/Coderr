@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from offers.models import Offer
 from offers.models import OfferDetail
 
@@ -24,7 +23,6 @@ class OfferDetailUrlSerializer(serializers.ModelSerializer):
     """Serializer that provides a URL reference for an OfferDetail instance."""
 
     url = serializers.SerializerMethodField()
-
     class Meta:
         model = OfferDetail
         fields = [
@@ -37,7 +35,6 @@ class OfferDetailUrlSerializer(serializers.ModelSerializer):
         Return absolute or relative URL for an OfferDetail instance.
         """
         request = self.context.get("request")
-
         if request:
             return request.build_absolute_uri(
                 f"/api/offerdetails/{obj.id}/"
@@ -55,11 +52,8 @@ class OfferListSerializer(serializers.ModelSerializer):
     )
 
     details = serializers.SerializerMethodField()
-
     min_price = serializers.ReadOnlyField()
-
     min_delivery_time = serializers.ReadOnlyField()
-
     user_details = serializers.SerializerMethodField()
 
     class Meta:
@@ -104,9 +98,7 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
     )
 
     details = serializers.SerializerMethodField()
-
     min_price = serializers.ReadOnlyField()
-
     min_delivery_time = serializers.ReadOnlyField()
 
     class Meta:
@@ -171,9 +163,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         Create Offer and its related OfferDetail instances.
         """
         request = self.context.get("request")
-
         details_data = validated_data.pop("details")
-
         offer = Offer.objects.create(
             user=request.user if request else None,
             **validated_data
