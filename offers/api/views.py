@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from offers.models import Offer
 from offers.models import OfferDetail
@@ -64,8 +65,12 @@ class OfferListCreateView(generics.ListCreateAPIView):
         if min_price:
             queryset = queryset.filter(details__price__gte=min_price)
         if max_delivery_time:
+            try:
+                max_delivery_time_int = int(max_delivery_time)
+            except ValueError:
+                raise ValidationError({"max_delivery_time": "Must be an integer."})
             queryset = queryset.filter(
-                details__delivery_time_in_days__lte=max_delivery_time
+                details__delivery_time_in_days__lte=max_delivery_time_int
             )
         if ordering == "min_price":
             queryset = queryset.order_by("min_price")

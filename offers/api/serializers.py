@@ -207,6 +207,18 @@ class OfferPatchSerializer(serializers.ModelSerializer):
             "details",
         ]
 
+    def validate_details(self, value):
+        """
+        Validate that each detail entry contains offer_type.
+        """
+        if value:
+            for detail_data in value:
+                if "offer_type" not in detail_data:
+                    raise serializers.ValidationError(
+                        "Each detail must include 'offer_type'."
+                    )
+        return value
+
     def update(self, instance, validated_data):
         """
         Update Offer fields and optionally update related OfferDetail entries.
